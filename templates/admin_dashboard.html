@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Admin - Sistema Objetos Perdidos{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Panel de Administración</h2>
+
+<h4>Objetos Reportados</h4>
+{% if objetos %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Foto</th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Área</th>
+      <th>Fecha</th>
+      <th>Encontrado por</th>
+      <th>Contacto</th>
+      <th>Reportado por</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for obj in objetos %}
+    <tr>
+      <td>
+        {% if obj.foto %}
+          <img src="{{ url_for('static', filename='uploads/' ~ obj.foto) }}" alt="Foto" style="width: 80px;">
+        {% else %}
+          Sin foto
+        {% endif %}
+      </td>
+      <td>{{ obj.nombre }}</td>
+      <td>{{ obj.descripcion or 'Sin descripción' }}</td>
+      <td>{{ obj.area }}</td>
+      <td>{{ obj.fecha_encuentro.strftime('%d/%m/%Y') }}</td>
+      <td>{{ obj.nombre_persona }}</td>
+      <td>{{ obj.contacto }}</td>
+      <td>{{ obj.reporter.username }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay objetos reportados.</p>
+{% endif %}
+
+<hr />
+
+<h4>Usuarios Registrados</h4>
+{% if usuarios %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Usuario</th>
+      <th>Rol</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in usuarios %}
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.role }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay usuarios registrados.</p>
+{% endif %}
+{% endblock %}

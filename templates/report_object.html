@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportar Objeto Perdido - Sistema Objetos Perdidos{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <h2 class="mb-4 text-center">Reportar Objeto Perdido</h2>
+    <form method="POST" enctype="multipart/form-data" novalidate>
+      {{ form.hidden_tag() }}
+
+      <div class="mb-3">
+        {{ form.nombre.label(class="form-label") }}
+        {{ form.nombre(class="form-control") }}
+        {% for error in form.nombre.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.descripcion.label(class="form-label") }}
+        {{ form.descripcion(class="form-control", rows="3") }}
+        {% for error in form.descripcion.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.area.label(class="form-label") }}
+        {{ form.area(class="form-control") }}
+        {% for error in form.area.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.fecha_encuentro.label(class="form-label") }}
+        {{ form.fecha_encuentro(class="form-control", type="date") }}
+        {% for error in form.fecha_encuentro.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.nombre_persona.label(class="form-label") }}
+        {{ form.nombre_persona(class="form-control") }}
+        {% for error in form.nombre_persona.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.contacto.label(class="form-label") }}
+        {{ form.contacto(class="form-control") }}
+        {% for error in form.contacto.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.foto.label(class="form-label") }}
+        {{ form.foto(class="form-control") }}
+        {% for error in form.foto.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">{{ form.submit.label.text }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

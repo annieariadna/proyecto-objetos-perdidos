@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Dashboard - Sistema Objetos Perdidos{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Mis Objetos Reportados</h2>
+
+{% if objetos %}
+  <div class="row">
+    {% for obj in objetos %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          {% if obj.foto %}
+          <img src="{{ url_for('static', filename='uploads/' ~ obj.foto) }}" class="card-img-top" alt="Foto de {{ obj.nombre }}">
+          {% else %}
+          <img src="https://via.placeholder.com/300x200?text=Sin+Foto" class="card-img-top" alt="Sin foto">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ obj.nombre }}</h5>
+            <p class="card-text">{{ obj.descripcion or 'Sin descripción' }}</p>
+            <p><strong>Área:</strong> {{ obj.area }}</p>
+            <p><strong>Fecha:</strong> {{ obj.fecha_encuentro.strftime('%d/%m/%Y') }}</p>
+            <p><strong>Encontrado por:</strong> {{ obj.nombre_persona }}</p>
+            <p><strong>Contacto:</strong> {{ obj.contacto }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No has reportado ningún objeto aún. <a href="{{ url_for('report_object') }}">Reporta uno aquí.</a></p>
+{% endif %}
+{% endblock %}
