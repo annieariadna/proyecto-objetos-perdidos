@@ -14,20 +14,26 @@ app.config.from_object(Config)
 
 db.init_app(app)
 
-# Configuración de correo
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'tu_correo@gmail.com'
-app.config['MAIL_PASSWORD'] = 'tu_contraseña'
-app.config['MAIL_DEFAULT_SENDER'] = 'tu_correo@gmail.com'
+# Configuración de correo para Gmail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Servidor SMTP de Google
+app.config['MAIL_PORT'] = 465  # Usa SSL (puedes usar 587 si prefieres TLS)
+app.config['MAIL_USE_TLS'] = False  # Usar TLS, en este caso no es necesario ya que usamos SSL
+app.config['MAIL_USE_SSL'] = True  # Usar SSL
+app.config['MAIL_USERNAME'] = 'tu_correo@gmail.com'  # Tu correo de Gmail
+app.config['MAIL_PASSWORD'] = 'tu_contraseña'  # Tu contraseña de Gmail o contraseña de aplicación
+app.config['MAIL_DEFAULT_SENDER'] = 'tu_correo@gmail.com'  # El correo que aparecerá como remitente
 
+# Inicialización de Flask-Mail
 mail = Mail(app)
 
 login_manager = LoginManager()
-login_manager.login_view = 'login'
+login_manager.login_view = 'login'  # Especifica la ruta para login
 login_manager.init_app(app)
+
+# Redirige sin mostrar el mensaje "Please log in to access this page"
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))  # Redirige sin el mensaje predeterminado
 
 ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 
@@ -249,3 +255,4 @@ def statistics():
 if __name__ == '__main__':
     app.run(debug=True)
 
+# Restante del código...

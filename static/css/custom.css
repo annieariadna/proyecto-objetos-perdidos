@@ -1,135 +1,108 @@
-/* custom.css - estilos personalizados para el sistema Objetos Perdidos UTP */
-
-/* Fuentes y colores base */
-body {
-  background-color: #f9fbfd;
-  font-family: 'Montserrat', sans-serif;
-  color: #003366; /* azul oscuro UTP */
+/* Asegurarse de que el body ocupe toda la pantalla */
+body, html {
   margin: 0;
   padding: 0;
+  height: 100%;  /* Asegura que ocupe toda la pantalla */
+  overflow: auto;  /* Permite desplazamiento si es necesario */
 }
 
-/* Navbar personalizado */
-.navbar {
-  background-color: #003366 !important; /* azul institucional */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  padding: 0.75rem 1rem;
+/* Contenedor principal que usa flexbox para distribuciones */
+.login-container {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  height: 100vh;  /* Asegura que ocupe toda la pantalla */
 }
 
-/* Links del navbar */
-.navbar .nav-link {
-  color: #cce7ff !important; /* celeste claro */
-  font-weight: 600;
-  transition: color 0.3s ease;
+.left-section {
+  flex: 1.5;  /* La sección celeste ocupa un 60% de la pantalla */
+  background-color: #b3d9f7;  /* Celeste suave */
+  height: 100%;  /* Asegura que ocupe toda la altura */
+  padding-left: 20%;  /* Ajustamos el espacio a la izquierda para que ocupe más */
+  padding-top: 0%;  /* Aseguramos que la sección celeste ocupe la parte superior */
 }
 
-.navbar .nav-link:hover,
-.navbar .nav-link:focus {
-  color: #ffffff !important;
+.right-section {
+  flex: 1;  /* La sección derecha (login) ocupa el tamaño adecuado */
+  background-color: #ffffff;  /* Blanco */
+  padding: 40px;
+  box-shadow: none;  /* Elimina cualquier sombra */
+  color: #003366;
+  height: 100%;  /* Asegura que ocupe toda la altura */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Botones primarios */
-.btn-primary {
+.form-container {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Títulos y descripción */
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #003366;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+  color: #003366;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Estilo para los campos de entrada */
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 1px solid #003366;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #666;
+  background-color: #f9f9f9;
+}
+
+/* Botón de iniciar sesión */
+button {
+  width: 100%;
+  padding: 15px;
   background-color: #003366;
-  border-color: #003366;
-  font-weight: 600;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
+button:hover {
   background-color: #002244;
-  border-color: #002244;
 }
 
-/* Tarjetas de objetos */
-.card {
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 51, 102, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+a {
+  color: #003366;
+  text-decoration: none;
 }
 
-.card:hover,
-.card:focus-within {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 20px rgba(0, 51, 102, 0.2);
-}
-
-/* Imágenes en tarjetas */
-.card-img-top {
-  border-radius: 15px 15px 0 0;
-  height: 250px;
-  object-fit: cover;
-}
-
-/* Badges para estado */
-.badge {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.badge.bg-warning {
-  color: #333333;
-}
-
-.badge.bg-success {
-  color: #ffffff;
-}
-
-/* Modal personalizado */
-.modal-content {
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.25);
-}
-
-.modal-header {
-  background-color: #003366;
-  color: #ffffff;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-}
-
-.modal-footer .btn-primary {
-  background-color: #003366;
-  border-color: #003366;
-}
-
-.modal-footer .btn-primary:hover {
-  background-color: #002244;
-  border-color: #002244;
-}
-
-/* Formularios */
-.form-control:focus {
-  border-color: #003366;
-  box-shadow: 0 0 5px rgba(0, 51, 102, 0.5);
-}
-
-/* Ajuste para que el body no quede tapado por el navbar */
-body {
-  padding-top: 90px;
+a:hover {
+  text-decoration: underline;
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
-  body {
-    padding-top: 110px;
+  .login-container {
+    flex-direction: column;
   }
-}
 
-/* Mensajes flash */
-.alert {
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-/* Scroll suave para modales */
-.modal.fade .modal-dialog {
-  transition: transform 0.3s ease-out;
-  transform: translateY(-50px);
-}
-
-.modal.show .modal-dialog {
-  transform: translateY(0);
+  .right-section {
+    padding: 30px;
+  }
 }
