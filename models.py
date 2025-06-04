@@ -24,6 +24,8 @@ class ObjetoPerdido(db.Model):
     fecha_encuentro = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     nombre_persona = db.Column(db.String(100), nullable=False)
     contacto = db.Column(db.String(100), nullable=False)
-    foto = db.Column(db.String(150), nullable=True)  # Nombre del archivo de la foto
+    foto = db.Column(db.String(150), nullable=True) 
+    estado = db.Column(db.String(20), nullable=False, default='Perdido')
+ # Nombre del archivo de la foto
     
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)

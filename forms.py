@@ -2,12 +2,20 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FileField, SelectField
 from wtforms.validators import DataRequired, Length, Regexp, EqualTo, ValidationError
 from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import ValidationError
+import re
+
+def validate_username(form, field):
+    if field.data != 'admin':
+        pattern = r'^u\d{8}$'
+        if not re.match(pattern, field.data):
+            raise ValidationError("El usuario debe ser 'admin' o empezar con 'u' seguido de 8 números")
 
 class LoginForm(FlaskForm):
-    username = StringField('Usuario', validators=[
-        DataRequired(),
-        Regexp(r'^u\d{8}$', message="El usuario debe empezar con 'u' seguido de 8 números")
-    ])
+    username = StringField('Usuario', validators=[DataRequired(), validate_username])
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    submit = SubmitField('Ingresar')
+
     password = PasswordField('Contraseña', validators=[DataRequired()])
     submit = SubmitField('Ingresar')
 

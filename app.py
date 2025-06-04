@@ -1,8 +1,9 @@
 import os
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from flask_mail import Mail, Message
 from datetime import datetime
 from models import db, User, ObjetoPerdido
 from forms import LoginForm, RegisterForm, ReportObjectForm
@@ -13,11 +14,21 @@ app.config.from_object(Config)
 
 db.init_app(app)
 
+# Configuración de correo
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'tu_correo@gmail.com'
+app.config['MAIL_PASSWORD'] = 'tu_contraseña'
+app.config['MAIL_DEFAULT_SENDER'] = 'tu_correo@gmail.com'
+
+mail = Mail(app)
+
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-# Permitir solo extensiones para subir fotos
 ALLOWED_EXTENSIONS = app.config['ALLOWED_EXTENSIONS']
 
 def allowed_file(filename):
@@ -28,27 +39,25 @@ def allowed_file(filename):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-    # Crear un admin por defecto si no existe
-    admin = User.query.filter_by(username='admin').first()
-    if not admin:
-        admin_user = User(
-            username='admin',
-            password=generate_password_hash('admin123', method='sha256'),
-            role='admin'
-        )
-        db.session.add(admin_user)
-        db.session.commit()
+@app.before_request
+def create_tables_once():
+    if not hasattr(app, 'tables_created'):
+        db.create_all()
+        app.tables_created = True
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin_user = User(
+                username='admin',
+                password=generate_password_hash('admin123', method='pbkdf2:sha256'),
+                role='admin'
+            )
+            db.session.add(admin_user)
+            db.session.commit()
 
 @app.route('/')
 @login_required
 def home():
-    if current_user.role == 'admin':
-        return redirect(url_for('admin_dashboard'))
-    else:
-        return redirect(url_for('user_dashboard'))
+    return redirect(url_for('inicio'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -81,7 +90,7 @@ def register():
         if existing_user:
             flash('El usuario ya existe.', 'danger')
             return render_template('register.html', form=form)
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         new_user = User(
             username=form.username.data,
             password=hashed_password,
@@ -135,14 +144,108 @@ def report_object():
             flash('Formato de archivo no permitido', 'danger')
     return render_template('report_object.html', form=form)
 
+@app.route('/marcar_encontrado/<int:objeto_id>', methods=['POST'])
+@login_required
+def marcar_encontrado(objeto_id):
+    if current_user.role != 'admin':
+        abort(403)
+    
+    objeto = ObjetoPerdido.query.get_or_404(objeto_id)
+    objeto.estado = 'Encontrado'
+    db.session.commit()
+    
+    return jsonify({'message': 'Objeto marcado como encontrado'})
+
+@app.route('/eliminar_objeto/<int:objeto_id>', methods=['POST'])
+@login_required
+def eliminar_objeto(objeto_id):
+    if current_user.role != 'admin':
+        abort(403)
+    
+    objeto = ObjetoPerdido.query.get_or_404(objeto_id)
+    db.session.delete(objeto)
+    db.session.commit()
+    
+    flash('Reporte de objeto eliminado correctamente.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
 @app.route('/admin_dashboard')
 @login_required
 def admin_dashboard():
     if current_user.role != 'admin':
         abort(403)
-    objetos = ObjetoPerdido.query.all()
-    usuarios = User.query.filter(User.role == 'user').all()
+    
+    objetos = ObjetoPerdido.query.all()  # Mostrar todos los objetos
+    usuarios = User.query.filter(User.role == 'user').all()  # Obtener todos los usuarios
     return render_template('admin_dashboard.html', objetos=objetos, usuarios=usuarios)
+
+@app.route('/inicio')
+@login_required
+def inicio():
+    query = ObjetoPerdido.query
+
+    # Filtros por query params
+    desc = request.args.get('descripcion', '', type=str)
+    ubicacion = request.args.get('ubicacion', '', type=str)
+    estado = request.args.get('estado', '', type=str)
+    fecha = request.args.get('fecha', '', type=str)
+
+    if desc:
+        query = query.filter(
+            db.or_(
+                ObjetoPerdido.nombre.ilike(f'%{desc}%'),
+                ObjetoPerdido.descripcion.ilike(f'%{desc}%')
+            )
+        )
+    if ubicacion:
+        query = query.filter(ObjetoPerdido.area == ubicacion)
+    if estado:
+        query = query.filter(ObjetoPerdido.estado == estado)
+    if fecha:
+        try:
+            fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
+            query = query.filter(db.func.date(ObjetoPerdido.fecha_encuentro) == fecha_dt.date())
+        except ValueError:
+            pass
+
+    objetos = query.order_by(ObjetoPerdido.fecha_encuentro.desc()).all()
+    areas = ['Cafetería', 'Cancha', 'Pasillo', 'Piso', 'Salón', 'Laboratorio']
+    return render_template('inicio.html', objetos=objetos, areas=areas)
+
+@app.route('/enviar_contacto', methods=['POST'])
+@login_required
+def enviar_contacto():
+    data = request.get_json()
+    contactoEmail = data.get('contactoEmail')  # Correo del usuario que ha reportado el objeto
+    mensaje = data.get('mensaje')
+
+    msg = Message('Nuevo mensaje de contacto', recipients=[contactoEmail])
+    msg.body = f"Mensaje: {mensaje}"
+    
+    try:
+        mail.send(msg)
+        return jsonify({'message': 'Mensaje enviado exitosamente'}), 200
+    except Exception as e:
+        print(f"Error al enviar mensaje: {e}")
+        return jsonify({'message': 'Error al enviar mensaje'}), 500
+    
+@app.route('/manage_users')
+@login_required
+def manage_users():
+    if current_user.role != 'admin':
+        abort(403)  # Solo los administradores pueden acceder
+    usuarios = User.query.all()  # Muestra todos los usuarios
+    return render_template('manage_users.html', usuarios=usuarios)
+
+@app.route('/statistics')
+@login_required
+def statistics():
+    if current_user.role != 'admin':
+        abort(403)  # Solo los administradores pueden acceder a las estadísticas
+    # Lógica para mostrar estadísticas
+    return render_template('statistics.html')  # Reemplaza con tu plantilla de estadísticas
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+

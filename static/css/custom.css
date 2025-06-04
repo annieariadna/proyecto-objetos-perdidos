@@ -1,0 +1,135 @@
+/* custom.css - estilos personalizados para el sistema Objetos Perdidos UTP */
+
+/* Fuentes y colores base */
+body {
+  background-color: #f9fbfd;
+  font-family: 'Montserrat', sans-serif;
+  color: #003366; /* azul oscuro UTP */
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar personalizado */
+.navbar {
+  background-color: #003366 !important; /* azul institucional */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem 1rem;
+}
+
+/* Links del navbar */
+.navbar .nav-link {
+  color: #cce7ff !important; /* celeste claro */
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #ffffff !important;
+}
+
+/* Botones primarios */
+.btn-primary {
+  background-color: #003366;
+  border-color: #003366;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #002244;
+  border-color: #002244;
+}
+
+/* Tarjetas de objetos */
+.card {
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 51, 102, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 51, 102, 0.2);
+}
+
+/* Imágenes en tarjetas */
+.card-img-top {
+  border-radius: 15px 15px 0 0;
+  height: 250px;
+  object-fit: cover;
+}
+
+/* Badges para estado */
+.badge {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.badge.bg-warning {
+  color: #333333;
+}
+
+.badge.bg-success {
+  color: #ffffff;
+}
+
+/* Modal personalizado */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.25);
+}
+
+.modal-header {
+  background-color: #003366;
+  color: #ffffff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.modal-footer .btn-primary {
+  background-color: #003366;
+  border-color: #003366;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #002244;
+  border-color: #002244;
+}
+
+/* Formularios */
+.form-control:focus {
+  border-color: #003366;
+  box-shadow: 0 0 5px rgba(0, 51, 102, 0.5);
+}
+
+/* Ajuste para que el body no quede tapado por el navbar */
+body {
+  padding-top: 90px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  body {
+    padding-top: 110px;
+  }
+}
+
+/* Mensajes flash */
+.alert {
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Scroll suave para modales */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: translateY(-50px);
+}
+
+.modal.show .modal-dialog {
+  transform: translateY(0);
+}

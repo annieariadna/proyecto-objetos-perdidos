@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Reporte - Objetos Perdidos UTP{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 text-center text-primary fw-bold">Editar Reporte de Objeto Perdido</h2>
+
+<form method="POST" enctype="multipart/form-data">
+  <!-- Utilizamos los valores previos del objeto para pre-cargar el formulario -->
+  <div class="mb-3">
+    <label for="nombre" class="form-label">Nombre del Objeto</label>
+    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ objeto.nombre }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="descripcion" class="form-label">Descripción</label>
+    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{ objeto.descripcion }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="area" class="form-label">Ubicación</label>
+    <select class="form-select" id="area" name="area" required>
+      <option value="Cafetería" {% if objeto.area == 'Cafetería' %}selected{% endif %}>Cafetería</option>
+      <option value="Cancha" {% if objeto.area == 'Cancha' %}selected{% endif %}>Cancha</option>
+      <option value="Pasillo" {% if objeto.area == 'Pasillo' %}selected{% endif %}>Pasillo</option>
+      <option value="Piso" {% if objeto.area == 'Piso' %}selected{% endif %}>Piso</option>
+      <option value="Salón" {% if objeto.area == 'Salón' %}selected{% endif %}>Salón</option>
+      <option value="Laboratorio" {% if objeto.area == 'Laboratorio' %}selected{% endif %}>Laboratorio</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="fecha_encuentro" class="form-label">Fecha de Encuentro</label>
+    <input type="date" class="form-control" id="fecha_encuentro" name="fecha_encuentro" value="{{ objeto.fecha_encuentro.strftime('%Y-%m-%d') }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="nombre_persona" class="form-label">Nombre de la Persona que Encontró el Objeto</label>
+    <input type="text" class="form-control" id="nombre_persona" name="nombre_persona" value="{{ objeto.nombre_persona }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="contacto" class="form-label">Contacto</label>
+    <input type="text" class="form-control" id="contacto" name="contacto" value="{{ objeto.contacto }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="foto" class="form-label">Subir Foto (Opcional)</label>
+    <input class="form-control" type="file" id="foto" name="foto">
+    {% if objeto.foto %}
+    <small class="form-text text-muted">Imagen actual: {{ objeto.foto }}</small>
+    {% endif %}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Actualizar Reporte</button>
+</form>
+
+{% endblock %}
+
