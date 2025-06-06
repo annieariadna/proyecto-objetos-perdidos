@@ -175,6 +175,7 @@ def eliminar_objeto(objeto_id):
     flash('Reporte de objeto eliminado correctamente.', 'success')
     return redirect(url_for('admin_dashboard'))
 
+
 @app.route('/admin_dashboard')
 @login_required
 def admin_dashboard():
@@ -250,6 +251,17 @@ def statistics():
         abort(403)  # Solo los administradores pueden acceder a las estadísticas
     # Lógica para mostrar estadísticas
     return render_template('statistics.html')  # Reemplaza con tu plantilla de estadísticas
+
+@app.route('/perfil')
+@login_required
+def perfil():
+    return render_template('perfil.html')  # Asegúrate de tener esta plantilla
+   
+@app.route('/report/<int:reporte_id>')
+@login_required
+def view_report(reporte_id):
+    objeto = ObjetoPerdido.query.get_or_404(reporte_id)
+    return render_template('view_report.html', obj=objeto)
 
 
 if __name__ == '__main__':

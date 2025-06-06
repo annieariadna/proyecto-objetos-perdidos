@@ -1,108 +1,53 @@
-/* Asegurarse de que el body ocupe toda la pantalla */
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;  /* Asegura que ocupe toda la pantalla */
-  overflow: auto;  /* Permite desplazamiento si es necesario */
+/* Estilo global para el cuerpo */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4; /* Fondo suave */
+    color: #000000; /* Color de texto oscuro */
 }
 
-/* Contenedor principal que usa flexbox para distribuciones */
-.login-container {
-  display: flex;
-  justify-content: stretch;
-  align-items: stretch;
-  height: 100vh;  /* Asegura que ocupe toda la pantalla */
-}
-
-.left-section {
-  flex: 1.5;  /* La sección celeste ocupa un 60% de la pantalla */
-  background-color: #b3d9f7;  /* Celeste suave */
-  height: 100%;  /* Asegura que ocupe toda la altura */
-  padding-left: 20%;  /* Ajustamos el espacio a la izquierda para que ocupe más */
-  padding-top: 0%;  /* Aseguramos que la sección celeste ocupe la parte superior */
-}
-
-.right-section {
-  flex: 1;  /* La sección derecha (login) ocupa el tamaño adecuado */
-  background-color: #ffffff;  /* Blanco */
-  padding: 40px;
-  box-shadow: none;  /* Elimina cualquier sombra */
-  color: #003366;
-  height: 100%;  /* Asegura que ocupe toda la altura */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.form-container {
-  max-width: 400px;
-  width: 100%;
-}
-
-/* Títulos y descripción */
-h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #003366;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-p {
-  font-size: 16px;
-  color: #003366;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Estilo para los campos de entrada */
-input {
-  width: 100%;
-  padding: 15px;
-  margin: 10px 0;
-  border: 1px solid #003366;
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 16px;
-  color: #666;
-  background-color: #f9f9f9;
-}
-
-/* Botón de iniciar sesión */
-button {
-  width: 100%;
-  padding: 15px;
-  background-color: #003366;
+/* Estilo para los botones */
+button, .btn {
+  background-color: #003366;  /* Azul oscuro */
   color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #002244;
+button:hover, .btn:hover {
+  background-color: #004084;  /* Azul más oscuro al pasar el cursor */
 }
 
-a {
-  color: #003366;
-  text-decoration: none;
+/* Ajustar el login para que esté centrado */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-a:hover {
-  text-decoration: underline;
+/* Ajustes de color para los textos de los reportes */
+.card-title {
+    color: #004084;  /* Color para el título de los objetos reportados */
 }
 
-/* Responsividad */
-@media (max-width: 768px) {
-  .login-container {
-    flex-direction: column;
-  }
+.card-text {
+    color: #555;  /* Descripción en color gris más oscuro */
+}
 
-  .right-section {
-    padding: 30px;
-  }
+/* Modificar color de los textos de los reportes */
+.card-body {
+    color: #333; /* Color de texto en los reportes */
+}
+
+/* Login sin barra de navegación */
+.login-page .navbar {
+    display: none;
+}
+/* Cambiar color del texto de los títulos */
+h2, .card-title {
+    color: #000000;  /* Negro */
+}
+
+/* Cambiar el color de los botones de "Buscar" a "Negro" */
+button {
+  background-color: #003366;  /* Azul oscuro, mismo color que el menú */
+  color: white;
 }

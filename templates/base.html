@@ -4,14 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Iniciar Sesión{% endblock %}</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 </head>
 <body class="{% if request.endpoint == 'login' %}login-page{% endif %}">
@@ -19,10 +13,6 @@
 <!-- Barra de navegación (navbar) -->
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003366;" fixed-top>
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="{{ url_for('inicio') }}">
-      <img src="{{ url_for('static', filename='logo_utp.png') }}" alt="UTP" style="height: 40px; margin-right: 10px;">
-      Objetos Perdidos UTP
-    </a>
     <button
       class="navbar-toggler"
       type="button"
@@ -37,17 +27,23 @@
 
     <div class="collapse navbar-collapse" id="navbarContent">
       {% if current_user.is_authenticated %}
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('inicio') }}">
-            <i class="bi bi-house-door"></i> Inicio
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0"> <!-- Coloca el perfil a la izquierda -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person"></i> {{ current_user.codigo }} - {{ current_user.role }}
           </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+          </ul>
         </li>
+      </ul>
 
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0"> <!-- Coloca el resto del menú a la derecha -->
         {% if current_user.role == 'user' %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('report_object') }}">
-            <i class="bi bi-plus-circle"></i> Reportar Objeto
+            <i class="bi bi-plus-circle"></i> Nuevo Reporte
           </a>
         </li>
         <li class="nav-item">
@@ -57,28 +53,16 @@
         </li>
         {% elif current_user.role == 'admin' %}
         <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
+          <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-gear"></i> Administración
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" style="min-width: 200px;">
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
             <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">Gestión de Reportes</a></li>
             <li><a class="dropdown-item" href="{{ url_for('manage_users') }}">Usuarios</a></li>
             <li><a class="dropdown-item" href="{{ url_for('statistics') }}">Estadísticas</a></li>
           </ul>
         </li>
         {% endif %}
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('logout') }}">
-            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-          </a>
-        </li>
       </ul>
       {% else %}
       <ul class="navbar-nav ms-auto">
@@ -97,22 +81,6 @@
     </div>
   </div>
 </nav>
-
-<!-- Asegúrate de que en el body haya padding para que no quede tapada por la navbar fija -->
-<style>
-  body {
-    padding-top: 0;
-  }
-
-  /* Ocultar navbar solo en la página de login */
-  .login-page .navbar {
-    display: none;
-  }
-
-  .navbar {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-</style>
 
 <div class="container mt-4">
   {% with messages = get_flashed_messages(with_categories=true) %}

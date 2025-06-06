@@ -1,202 +1,59 @@
 {% extends 'base.html' %}
-{% block title %}Mis Reportes{% endblock %}
+
+{% block title %}Mis Reportes - Objetos Perdidos UTP{% endblock %}
 
 {% block content %}
-<!-- Definimos variable global justo al principio -->
-<script>
-  window.currentUserId = {{ current_user.id | tojson }};
-</script>
-
-<h2 class="mb-4 text-primary fw-bold text-center">Mis Reportes</h2>
+<h2 class="mb-4 text-center text-primary fw-bold">Mis Reportes</h2>
 
 {% if objetos %}
 <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for obj in objetos %}
   <div class="col">
-    <div
-      class="card h-100 shadow rounded-3"
-      style="cursor: pointer; border-radius: 15px;"
-      data-bs-toggle="modal"
-      data-bs-target="#detalleModal"
-      data-id="{{ obj.id }}"
-      data-userid="{{ obj.user_id }}"
-      data-nombre="{{ obj.nombre }}"
-      data-estado="{{ obj.estado or 'Perdido' }}"
-      data-descripcion="{{ obj.descripcion }}"
-      data-area="{{ obj.area }}"
-      data-fecha="{{ obj.fecha_encuentro.strftime('%d/%m/%Y') }}"
-      data-persona="{{ obj.nombre_persona }}"
-      data-contacto="{{ obj.contacto }}"
-      data-foto="{{ url_for('static', filename='uploads/' ~ obj.foto) if obj.foto else 'https://via.placeholder.com/300x300?text=Sin+Foto' }}"
-      role="button"
-      tabindex="0"
-      aria-label="Ver detalles de {{ obj.nombre }}"
-    >
-      {% if obj.foto %}
+    <div class="card h-100 shadow rounded-3">
       <img
-        src="{{ url_for('static', filename='uploads/' ~ obj.foto) }}"
+        src="{{ url_for('static', filename='uploads/' ~ obj.foto) if obj.foto else 'https://via.placeholder.com/300x250?text=Sin+Foto' }}"
         class="card-img-top rounded-top-3"
         alt="Foto {{ obj.nombre }}"
         style="height: 250px; object-fit: cover; border-radius: 15px 15px 0 0;"
       />
-      {% else %}
-      <img
-        src="https://via.placeholder.com/300x250?text=Sin+Foto"
-        class="card-img-top rounded-top-3"
-        alt="Sin foto"
-        style="height: 250px; object-fit: cover; border-radius: 15px 15px 0 0;"
-      />
-      {% endif %}
-      <div class="card-body d-flex flex-column justify-content-between">
-        <div>
-          <h5 class="card-title text-primary fw-bold">{{ obj.nombre }}</h5>
-          <p class="card-text text-secondary small">{{ obj.descripcion or 'Sin descripción' }}</p>
-          <p class="mb-1">
-            <i class="bi bi-geo-alt-fill text-info"></i>
-            <span class="fw-semibold">{{ obj.area }}</span>
-          </p>
-          <p class="mb-2">
-            <i class="bi bi-calendar-event-fill text-muted"></i>
-            <small>{{ obj.fecha_encuentro.strftime('%d/%m/%Y') }}</small>
-          </p>
-        </div>
-        <p>
-          <span
-            class="badge rounded-pill bg-{{ 'success' if obj.estado == 'Encontrado' else 'warning' }} text-dark"
-            style="font-size: 0.85rem;"
-            >{{ obj.estado or 'Perdido' }}</span
-          >
-        </p>
+      <div class="card-body">
+        <h5 class="card-title">{{ obj.nombre }}</h5>
+        <p class="card-text">{{ obj.descripcion }}</p>
+        <p class="text-muted"><strong>Ubicación:</strong> {{ obj.area }}</p>
+        <p class="text-muted"><strong>Fecha:</strong> {{ obj.fecha_encuentro.strftime('%d/%m/%Y') }}</p>
+        <p class="text-muted"><strong>Estado:</strong> {{ obj.estado }}</p>
+
+        <a href="{{ url_for('view_report', report_id=obj.id) }}" class="btn btn-info">Ver Detalles</a>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmEliminarModal" data-id="{{ obj.id }}">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
 
-<!-- Modal detalles -->
-<div
-  class="modal fade"
-  id="detalleModal"
-  tabindex="-1"
-  aria-labelledby="detalleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content rounded-4 shadow-lg">
-      <div class="modal-header bg-primary text-white rounded-top-4">
-        <h5 class="modal-title" id="detalleModalLabel">Detalles del Objeto</h5>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="modal"
-          aria-label="Cerrar"
-        ></button>
+<!-- Modal Confirmar Eliminación -->
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="confirmEliminarModal" tabindex="-1" aria-labelledby="confirmEliminarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmEliminarModalLabel">Confirmar Eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <img
-          id="modalFoto"
-          src=""
-          alt="Foto objeto"
-          class="img-fluid rounded mb-3 shadow-sm"
-          style="max-height: 400px; width: 100%; object-fit: contain;"
-        />
-        <h3 id="modalNombre" class="text-primary fw-bold"></h3>
-        <p>
-          <span
-            id="modalEstado"
-            class="badge rounded-pill bg-warning text-dark"
-            style="font-size: 1rem;"
-          ></span>
-        </p>
-        <p id="modalDescripcion" class="mb-3"></p>
-        <p><strong>Ubicación:</strong> <span id="modalArea"></span></p>
-        <p><strong>Fecha:</strong> <span id="modalFecha"></span></p>
-        <p><strong>Encontrado por:</strong> <span id="modalPersona"></span></p>
-        <p>
-          <strong>Contacto:</strong>
-          <a href="#" id="modalContacto" class="text-decoration-none"></a>
-        </p>
+        ¿Estás seguro de que deseas eliminar este reporte?
       </div>
       <div class="modal-footer">
-        <a href="#" id="modalContactoBtn" class="btn btn-primary">
-          <i class="bi bi-envelope"></i> Contactar
-        </a>
-        <button
-          id="btnMarcarEncontrado"
-          type="button"
-          class="btn btn-success me-2"
-          style="display:none;"
-        >
-          <i class="bi bi-check-circle"></i> Marcar como Encontrado
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
-          Cerrar
-        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnEliminarConfirmado">Eliminar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Script principal -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var detalleModal = document.getElementById('detalleModal');
-
-    detalleModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget;
-
-      var userid = button.getAttribute('data-userid');
-      var estado = button.getAttribute('data-estado');
-      var id = button.getAttribute('data-id');
-
-      var btnMarcar = document.getElementById('btnMarcarEncontrado');
-
-      if (
-        window.currentUserId !== null &&
-        parseInt(userid) === window.currentUserId &&
-        estado === 'Perdido'
-      ) {
-        btnMarcar.style.display = 'inline-block';
-        btnMarcar.onclick = function () {
-          fetch(`/marcar_encontrado/${id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-          })
-          .then(function (response) {
-            if (response.ok) location.reload();
-            else alert('Error al actualizar estado');
-          })
-          .catch(function () { alert('Error al actualizar estado'); });
-        };
-      } else {
-        btnMarcar.style.display = 'none';
-      }
-
-      // Asignar resto de datos al modal
-      document.getElementById('modalNombre').textContent = button.getAttribute('data-nombre');
-      document.getElementById('modalEstado').textContent = estado;
-      document.getElementById('modalEstado').className = 'badge rounded-pill ' + (estado === 'Encontrado' ? 'bg-success' : 'bg-warning text-dark');
-      document.getElementById('modalDescripcion').textContent = button.getAttribute('data-descripcion') || 'Sin descripción';
-      document.getElementById('modalArea').textContent = button.getAttribute('data-area');
-      document.getElementById('modalFecha').textContent = button.getAttribute('data-fecha');
-      document.getElementById('modalPersona').textContent = button.getAttribute('data-persona');
-
-      var contacto = button.getAttribute('data-contacto');
-      var contactoLink = document.getElementById('modalContacto');
-      contactoLink.textContent = contacto;
-      contactoLink.href = 'mailto:' + contacto;
-      document.getElementById('modalContactoBtn').href = 'mailto:' + contacto;
-
-      document.getElementById('modalFoto').src = button.getAttribute('data-foto');
-    });
-  });
-</script>
-
 {% else %}
-<p class="text-center text-muted fs-5 mt-5">No tienes reportes.</p>
+<p class="text-center text-muted fs-5 mt-5">No has reportado objetos aún.</p>
 {% endif %}
 {% endblock %}

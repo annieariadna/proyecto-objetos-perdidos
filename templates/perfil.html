@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil del Usuario{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">Mi Perfil</h2>
+
+<div class="card mx-auto" style="max-width: 600px;">
+  <div class="card-body">
+    <h5 class="card-title">{{ current_user.username }}</h5>
+    <p><strong>Correo:</strong> {{ current_user.email }}</p>
+    <p><strong>Rol:</strong> {{ current_user.role }}</p>
+    
+    <!-- Agrega más detalles si es necesario -->
+    
+    <a href="{{ url_for('logout') }}" class="btn btn-danger">Cerrar Sesión</a>
+  </div>
+</div>
+{% endblock %}

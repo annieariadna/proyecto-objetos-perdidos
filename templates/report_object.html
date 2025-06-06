@@ -28,6 +28,21 @@
     </select>
   </div>
 
+  <!-- Nuevo campo para seleccionar Aula o Laboratorio -->
+  <div class="mb-3">
+    <label for="lugar" class="form-label">Lugar:</label>
+    <select class="form-select" id="lugar" name="lugar" required>
+      <option value="aula">Aula</option>
+      <option value="laboratorio">Laboratorio</option>
+    </select>
+  </div>
+
+  <!-- Campo para el número de salón, que aparecerá solo si se selecciona Aula o Laboratorio -->
+  <div class="mb-3" id="salon_input" style="display:none;">
+    <label for="numero_salon" class="form-label">Número de Salón:</label>
+    <input type="text" class="form-control" id="numero_salon" name="numero_salon">
+  </div>
+
   <div class="mb-3">
     <label for="fecha_encuentro" class="form-label">Fecha de Encuentro</label>
     <input type="date" class="form-control" id="fecha_encuentro" name="fecha_encuentro" required>
@@ -51,6 +66,15 @@
   <button type="submit" class="btn btn-primary">Reportar Objeto</button>
 </form>
 
-{% endblock %}
+<script>
+  document.getElementById('lugar').addEventListener('change', function () {
+    if (this.value === 'aula' || this.value === 'laboratorio') {
+      document.getElementById('salon_input').style.display = 'block';
+    } else {
+      document.getElementById('salon_input').style.display = 'none';
+    }
+  });
+</script>
 
+{% endblock %}
 
